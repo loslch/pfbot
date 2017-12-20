@@ -49,13 +49,13 @@ Implement `Keyboard` handler and bind:
 
 ```golang
 func keyboardHandler() Keyboard {
-	return Keyboard{
-		Type: "text",
-		Buttons: []string{
-			"Hello",
-			"World",
-		},
-	}
+  return Keyboard{
+    Type: "text",
+    Buttons: []string{
+      "Hello",
+      "World",
+    },
+  }
 }
 
 bot.HandleKeyboard(keyboardHandler)
@@ -65,15 +65,15 @@ Implement `Message` handler and bind:
 
 ```golang
 func messageHandler(userKey, messageType, content string) (Message, Keyboard) {
-	//do something
-	
-	msg := Message{
-		Text: "hello world",
-	}
-	keyboard := Keyboard{
-		Type: "text",
-	}
-	return msg, keyboard
+  //do something
+  
+  msg := Message{
+    Text: "hello world",
+  }
+  keyboard := Keyboard{
+    Type: "text",
+  }
+  return msg, keyboard
 }
 
 bot.HandleMessage(messageHandler)
@@ -83,7 +83,7 @@ Implement `AddFriend` handler and bind:
 
 ```golang
 func addFriendHandler(userKey string) Status {
-	return Status{200, 0, "success"}
+  return Status{200, 0, "success"}
 }
 
 bot.HandleAddFriend(addFriendHandler)
@@ -93,7 +93,7 @@ Implement `BlockFriend` handler and bind:
 
 ```golang
 func blockFriendHandler(userKey string) Status {
-	return Status{200, 0, "success"}
+  return Status{200, 0, "success"}
 }
 
 bot.HandleBlockFriend(blockFriendHandler)
@@ -103,7 +103,7 @@ Implement `QuitChatRoom` handler and bind:
 
 ```golang
 func quitChatRoom(userKey string) Status {
-	return Status{200, 0, "success"}
+  return Status{200, 0, "success"}
 }
 
 bot.HandleQuitChatRoom(quitChatRoom)
