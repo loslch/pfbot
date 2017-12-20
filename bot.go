@@ -52,67 +52,47 @@ type Bot struct {
 	quitChatRoomHandler http.HandlerFunc
 }
 
-func (b *Bot) HandleKeyboard(h func() Keyboard) {
-	b.keyboardHandler = func(w http.ResponseWriter, req *http.Request) {
-		keyboard := h()
+func (b *Bot) HandleKeyboard(handler func() Keyboard) {
+	b.keyboardHandler = func(res http.ResponseWriter, req *http.Request) {
+		keyboard := handler()
 		obj := keyboardResponse{keyboard}
-		res, err := json.MarshalIndent(obj, "", "  ")
-		if err != nil {
-			panic(err)
-		}
-		w.Write(res)
+		res.Write(stringify(obj))
 	}
 }
 
-func (b *Bot) HandleMessage(h func(userKey, messageType, content string) (Message, Keyboard)) {
-	b.messageHandler = func(w http.ResponseWriter, req *http.Request) {
+func (b *Bot) HandleMessage(handler func(userKey, messageType, content string) (Message, Keyboard)) {
+	b.messageHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		message, keyboard := h(vars["user_key"], "", "")
+		message, keyboard := handler(vars["user_key"], "", "")
 		obj := messageResponse{message, keyboard}
-		res, err := json.MarshalIndent(obj, "", "  ")
-		if err != nil {
-			panic(err)
-		}
-		w.Write(res)
+		res.Write(stringify(obj))
 	}
 }
 
-func (b *Bot) HandleAddFriend(h func(userKey string) Status) {
-	b.addFriendHandler = func(w http.ResponseWriter, req *http.Request) {
+func (b *Bot) HandleAddFriend(handler func(userKey string) Status) {
+	b.addFriendHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		status := h(vars["user_key"])
+		status := handler(vars["user_key"])
 		obj := friendResponse{status}
-		res, err := json.MarshalIndent(obj, "", "  ")
-		if err != nil {
-			panic(err)
-		}
-		w.Write(res)
+		res.Write(stringify(obj))
 	}
 }
 
-func (b *Bot) HandleBlockFriend(h func(userKey string) Status) {
-	b.blockFriendHandler = func(w http.ResponseWriter, req *http.Request) {
+func (b *Bot) HandleBlockFriend(handler func(userKey string) Status) {
+	b.blockFriendHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		status := h(vars["user_key"])
+		status := handler(vars["user_key"])
 		obj := friendResponse{status}
-		res, err := json.MarshalIndent(obj, "", "  ")
-		if err != nil {
-			panic(err)
-		}
-		w.Write(res)
+		res.Write(stringify(obj))
 	}
 }
 
-func (b *Bot) HandleQuitChatRoom(h func(userKey string) Status) {
-	b.quitChatRoomHandler = func(w http.ResponseWriter, req *http.Request) {
+func (b *Bot) HandleQuitChatRoom(handler func(userKey string) Status) {
+	b.quitChatRoomHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		status := h(vars["user_key"])
+		status := handler(vars["user_key"])
 		obj := chatRoomResponse{status}
-		res, err := json.MarshalIndent(obj, "", "  ")
-		if err != nil {
-			panic(err)
-		}
-		w.Write(res)
+		res.Write(stringify(obj))
 	}
 }
 
@@ -146,4 +126,21 @@ func (b *Bot) Run(path, port string) {
 	//b.router.PathPrefix(path).Handler(b)
 	http.Handle("/", b)
 	http.ListenAndServe(port, nil)
+}
+
+func stringify(o interface{}) []byte {
+	var obj []byte
+	var err error
+
+	switch v := o.(type) {
+	case keyboardResponse, messageResponse, friendResponse, chatRoomResponse:
+		obj, err = json.MarshalIndent(v, "", "  ")
+	default:
+		panic("invalid response type")
+	}
+	if err != nil {
+		panic(err)
+	}
+
+	return obj
 }
