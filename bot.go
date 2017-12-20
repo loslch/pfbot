@@ -34,51 +34,6 @@ type Status struct {
 	Message        string `json:"message"`
 }
 
-type keyboardDTO struct {
-	Keyboard
-}
-
-type messageDTO struct {
-	Message
-	Keyboard
-}
-
-type friendDTO struct {
-	Status
-}
-
-type chatRoomDTO struct {
-	Status
-}
-
-/*
-Home Keyboard API
- - Method : GET
- - URL : http(s)://:your_server_url/keyboard
- - https://github.com/plusfriend/auto_reply/blob/master/README.md#51-home-keyboard-api
- */
-
-/*
-메시지 수신 및 자동응답 API
- - Method : POST
- - URL : http(s)://:your_server_url/message
- - https://github.com/plusfriend/auto_reply/blob/master/README.md#52-메시지-수신-및-자동응답-api
- */
-
-/*
-친구 추가/차단 알림 API
- - Method : POST / DELETE
- - URL : http(s)://:your_server_url/friend
- - https://github.com/plusfriend/auto_reply/blob/master/README.md#53-친구-추가차단-알림-api
- */
-
-/*
-채팅방 나가기
- - Method : DELETE
- - URL : http(s)://:your_server_url/chat_room/:user_key
- - https://github.com/plusfriend/auto_reply/blob/master/README.md#54-채팅방-나가기
- */
-
 func NewBot() *Bot {
 	bot := &Bot{}
 	bot.router = mux.NewRouter()
@@ -100,7 +55,7 @@ type Bot struct {
 func (b *Bot) HandleKeyboard(h func() Keyboard) {
 	b.keyboardHandler = func(w http.ResponseWriter, req *http.Request) {
 		keyboard := h()
-		obj := keyboardDTO{keyboard}
+		obj := keyboardResponse{keyboard}
 		res, err := json.MarshalIndent(obj, "", "  ")
 		if err != nil {
 			panic(err)
@@ -113,7 +68,7 @@ func (b *Bot) HandleMessage(h func(userKey, messageType, content string) (Messag
 	b.messageHandler = func(w http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		message, keyboard := h(vars["user_key"], "", "")
-		obj := messageDTO{message, keyboard}
+		obj := messageResponse{message, keyboard}
 		res, err := json.MarshalIndent(obj, "", "  ")
 		if err != nil {
 			panic(err)
@@ -122,11 +77,11 @@ func (b *Bot) HandleMessage(h func(userKey, messageType, content string) (Messag
 	}
 }
 
-func (b *Bot) HandleAddFriend(h func(userKey string) bool) {
+func (b *Bot) HandleAddFriend(h func(userKey string) Status) {
 	b.addFriendHandler = func(w http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		h(vars["user_key"])
-		obj := friendDTO{Status{200, 0, "success"}}
+		status := h(vars["user_key"])
+		obj := friendResponse{status}
 		res, err := json.MarshalIndent(obj, "", "  ")
 		if err != nil {
 			panic(err)
@@ -135,11 +90,11 @@ func (b *Bot) HandleAddFriend(h func(userKey string) bool) {
 	}
 }
 
-func (b *Bot) HandleBlockFriend(h func(userKey string) bool) {
+func (b *Bot) HandleBlockFriend(h func(userKey string) Status) {
 	b.blockFriendHandler = func(w http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		h(vars["user_key"])
-		obj := friendDTO{Status{200, 0, "success"}}
+		status := h(vars["user_key"])
+		obj := friendResponse{status}
 		res, err := json.MarshalIndent(obj, "", "  ")
 		if err != nil {
 			panic(err)
@@ -148,11 +103,11 @@ func (b *Bot) HandleBlockFriend(h func(userKey string) bool) {
 	}
 }
 
-func (b *Bot) HandleQuitChatRoom(h func(userKey string) bool) {
+func (b *Bot) HandleQuitChatRoom(h func(userKey string) Status) {
 	b.quitChatRoomHandler = func(w http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		h(vars["user_key"])
-		obj := chatRoomDTO{Status{200, 0, "success"}}
+		status := h(vars["user_key"])
+		obj := chatRoomResponse{status}
 		res, err := json.MarshalIndent(obj, "", "  ")
 		if err != nil {
 			panic(err)
