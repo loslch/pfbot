@@ -13,8 +13,8 @@ type Keyboard struct {
 
 type Message struct {
 	Text          string        `json:"text,omitempty"`
-	Photo         Photo         `json:"photo,omitempty"`
-	MessageButton MessageButton `json:"message_button,omitempty"`
+	Photo         *Photo         `json:"photo,omitempty"`
+	MessageButton *MessageButton `json:"message_button,omitempty"`
 }
 
 type MessageButton struct {

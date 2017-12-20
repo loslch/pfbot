@@ -2,54 +2,109 @@ package pfbot
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func keyboardHandler() Keyboard {
-	//do something
+func TestConfigureAppInfo(t *testing.T) {
+	appKey := "appkey"
+	appSecret := "appsecret"
 
-	return Keyboard{
-		Type: "text",
-		Buttons: []string{
-			"Hello",
-			"Parking",
+	bot := NewBot()
+	bot.AppKey = appKey
+	bot.AppSecret = appSecret
+
+	assert.Equal(t, appKey, bot.AppKey)
+	assert.Equal(t, appSecret, bot.AppSecret)
+}
+
+func TestBindKeyboardHandler(t *testing.T) {
+	f := func() Keyboard {
+		return Keyboard{
+			Type: "text",
+		}
+	}
+
+	bot := NewBot()
+	assert.Nil(t, bot.keyboardHandler)
+
+	bot.HandleKeyboard(f)
+	assert.NotNil(t, bot.keyboardHandler)
+}
+
+func TestStringifyKeyboard(t *testing.T) {
+	obj := keyboardResponse{
+		Keyboard{
+			Type: "text",
 		},
 	}
+
+	expect := "{\n" +
+		"  \"type\": \"text\"\n" +
+		"}"
+
+	assert.Equal(t, expect, string(stringify(obj)))
 }
 
-func messageHandler(userKey, messageType, content string) (Message, Keyboard) {
-	msg := Message{
-		Text: "hello world",
+func TestStringifyMessage(t *testing.T) {
+	obj := messageResponse{
+		Message{
+			Text:  "hello",
+			Photo: nil,
+			MessageButton: &MessageButton{
+				URL:   "button_url",
+				Label: "label",
+			},
+		},
+		Keyboard{
+			Type: "text",
+		},
 	}
-	keyboard := Keyboard{
-		Type: "text",
+
+	expect := "{\n" +
+		"  \"text\": \"hello\",\n" +
+		"  \"message_button\": {\n" +
+		"    \"label\": \"label\",\n" +
+		"    \"url\": \"button_url\"\n" +
+		"  },\n" +
+		"  \"type\": \"text\"\n" +
+		"}"
+
+	assert.Equal(t, expect, string(stringify(obj)))
+}
+
+func TestStringifyFriend(t *testing.T) {
+	obj := friendResponse{
+		Status{
+			HttpStatusCode: 200,
+			Code:           0,
+			Message:        "success",
+		},
 	}
-	return msg, keyboard
+
+	expect := "{\n" +
+		"  \"status\": 200,\n" +
+		"  \"code\": 0,\n" +
+		"  \"message\": \"success\"\n" +
+		"}"
+
+	assert.Equal(t, expect, string(stringify(obj)))
 }
 
-func addFriendHandler(userKey string) bool {
-	return true
-}
+func TestStringifyChatRoom(t *testing.T) {
+	obj := chatRoomResponse{
+		Status{
+			HttpStatusCode: 200,
+			Code:           0,
+			Message:        "success",
+		},
+	}
 
-func blockFriendHandler(userKey string) bool {
-	return true
-}
+	expect := "{\n" +
+		"  \"status\": 200,\n" +
+		"  \"code\": 0,\n" +
+		"  \"message\": \"success\"\n" +
+		"}"
 
-func quitChatRoom(userKey string) bool {
-	return true
-}
-
-func TestRun(t *testing.T) {
-	bot := NewBot()
-	bot.AppKey = "key"
-	bot.AppSecret = "secret"
-
-	bot.HandleKeyboard(keyboardHandler)
-	bot.HandleMessage(messageHandler)
-	bot.HandleAddFriend(addFriendHandler)
-	bot.HandleBlockFriend(blockFriendHandler)
-	bot.HandleQuitChatRoom(quitChatRoom)
-
-	//bot.Run("/", ":8080")
-
-	t.Skip("%v", bot)
+	assert.Equal(t, expect, string(stringify(obj)))
 }
