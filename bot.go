@@ -1,9 +1,9 @@
 package pfbot
 
 import (
-	"net/http"
-	"github.com/gorilla/mux"
 	"encoding/json"
+	"github.com/gorilla/mux"
+	"net/http"
 )
 
 type Keyboard struct {
@@ -12,7 +12,7 @@ type Keyboard struct {
 }
 
 type Message struct {
-	Text          string        `json:"text,omitempty"`
+	Text          string         `json:"text,omitempty"`
 	Photo         *Photo         `json:"photo,omitempty"`
 	MessageButton *MessageButton `json:"message_button,omitempty"`
 }
