@@ -6,7 +6,7 @@ pfbot is the unofficial (Kakao Talk) Plus Friend Bot SDK for the Go programming 
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ```golang
-bot := NewBot()
+bot := pfbot.NewBot()
 
 bot.HandleKeyboard(keyboardHandler)
 
@@ -36,7 +36,7 @@ To build and run your Plus Friend Bot, you should create Bot instance and implem
 Create Bot instance:
 
 ```golang
-bot := NewBot()
+bot := pfbot.NewBot()
 ```
 
 Run your bot:
@@ -48,8 +48,8 @@ bot.Run("/", ":8080")
 Implement `Keyboard` handler and bind:
 
 ```golang
-func keyboardHandler() Keyboard {
-  return Keyboard{
+func keyboardHandler() pfbot.Keyboard {
+  return pfbot.Keyboard{
     Type: "text",
     Buttons: []string{
       "Hello",
@@ -64,13 +64,13 @@ bot.HandleKeyboard(keyboardHandler)
 Implement `Message` handler and bind:
 
 ```golang
-func messageHandler(userKey, messageType, content string) (Message, Keyboard) {
+func messageHandler(userKey, messageType, content string) (pfbot.Message, pfbot.Keyboard) {
   //do something
   
-  msg := Message{
+  msg := pfbot.Message{
     Text: "hello world",
   }
-  keyboard := Keyboard{
+  keyboard := pfbot.Keyboard{
     Type: "text",
   }
   return msg, keyboard
@@ -82,8 +82,8 @@ bot.HandleMessage(messageHandler)
 Implement `AddFriend` handler and bind:
 
 ```golang
-func addFriendHandler(userKey string) Status {
-  return Status{200, 0, "success"}
+func addFriendHandler(userKey string) pfbot.Status {
+  return pfbot.Status{200, 0, "success"}
 }
 
 bot.HandleAddFriend(addFriendHandler)
@@ -92,8 +92,8 @@ bot.HandleAddFriend(addFriendHandler)
 Implement `BlockFriend` handler and bind:
 
 ```golang
-func blockFriendHandler(userKey string) Status {
-  return Status{200, 0, "success"}
+func blockFriendHandler(userKey string) pfbot.Status {
+  return pfbot.Status{200, 0, "success"}
 }
 
 bot.HandleBlockFriend(blockFriendHandler)
@@ -102,8 +102,8 @@ bot.HandleBlockFriend(blockFriendHandler)
 Implement `QuitChatRoom` handler and bind:
 
 ```golang
-func quitChatRoom(userKey string) Status {
-  return Status{200, 0, "success"}
+func quitChatRoom(userKey string) pfbot.Status {
+  return pfbot.Status{200, 0, "success"}
 }
 
 bot.HandleQuitChatRoom(quitChatRoom)
@@ -119,6 +119,7 @@ or to run with [net/http](https://golang.org/pkg/net/http/):
 
 ```golang
 http.Handle("/", bot)
+http.ListenAndServe(":8080", nil)
 ```
 
 Configure `AppKey` and `AppSecret` (but, no use case yet):
