@@ -48,8 +48,8 @@ bot.Run("/", ":8080")
 Implement `Keyboard` handler and bind:
 
 ```golang
-func keyboardHandler() pfbot.Keyboard {
-  return pfbot.Keyboard{
+func keyboardHandler() *pfbot.Keyboard {
+  return &pfbot.Keyboard{
     Type: "text",
     Buttons: []string{
       "Hello",
@@ -64,13 +64,13 @@ bot.HandleKeyboard(keyboardHandler)
 Implement `Message` handler and bind:
 
 ```golang
-func messageHandler(userKey, messageType, content string) (pfbot.Message, pfbot.Keyboard) {
+func messageHandler(userKey, messageType, content string) (*pfbot.Message, *pfbot.Keyboard) {
   //do something
   
-  msg := pfbot.Message{
+  msg := &pfbot.Message{
     Text: "hello world",
   }
-  keyboard := pfbot.Keyboard{
+  keyboard := &pfbot.Keyboard{
     Type: "text",
   }
   return msg, keyboard
@@ -82,8 +82,8 @@ bot.HandleMessage(messageHandler)
 Implement `AddFriend` handler and bind:
 
 ```golang
-func addFriendHandler(userKey string) pfbot.Status {
-  return pfbot.Status{200, 0, "success"}
+func addFriendHandler(userKey string) *pfbot.Status {
+  return &pfbot.Status{200, 0, "success"}
 }
 
 bot.HandleAddFriend(addFriendHandler)
@@ -92,8 +92,8 @@ bot.HandleAddFriend(addFriendHandler)
 Implement `BlockFriend` handler and bind:
 
 ```golang
-func blockFriendHandler(userKey string) pfbot.Status {
-  return pfbot.Status{200, 0, "success"}
+func blockFriendHandler(userKey string) *pfbot.Status {
+  return &pfbot.Status{200, 0, "success"}
 }
 
 bot.HandleBlockFriend(blockFriendHandler)
@@ -102,8 +102,8 @@ bot.HandleBlockFriend(blockFriendHandler)
 Implement `QuitChatRoom` handler and bind:
 
 ```golang
-func quitChatRoom(userKey string) pfbot.Status {
-  return pfbot.Status{200, 0, "success"}
+func quitChatRoom(userKey string) *pfbot.Status {
+  return &pfbot.Status{200, 0, "success"}
 }
 
 bot.HandleQuitChatRoom(quitChatRoom)
