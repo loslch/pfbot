@@ -63,7 +63,7 @@ func (b *Bot) HandleKeyboard(handler func() *Keyboard) {
 func (b *Bot) HandleMessage(handler func(userKey, messageType, content string) (*Message, *Keyboard)) {
 	b.messageHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		message, keyboard := handler(vars["user_key"], "", "")
+		message, keyboard := handler(vars["user_key"], vars["type"], vars["content"])
 		obj := messageResponse{message, keyboard}
 		res.Write(stringify(obj))
 	}
