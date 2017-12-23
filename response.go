@@ -1,18 +1,18 @@
 package pfbot
 
 type keyboardResponse struct {
-	Keyboard
+	*Keyboard
 }
 
 type messageResponse struct {
-	Message
-	Keyboard
+	*Message
+	*Keyboard
 }
 
 type friendResponse struct {
-	Status
+	*Status
 }
 
 type chatRoomResponse struct {
-	Status
+	*Status
 }

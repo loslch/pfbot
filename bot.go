@@ -52,7 +52,7 @@ type Bot struct {
 	quitChatRoomHandler http.HandlerFunc
 }
 
-func (b *Bot) HandleKeyboard(handler func() Keyboard) {
+func (b *Bot) HandleKeyboard(handler func() *Keyboard) {
 	b.keyboardHandler = func(res http.ResponseWriter, req *http.Request) {
 		keyboard := handler()
 		obj := keyboardResponse{keyboard}
@@ -60,7 +60,7 @@ func (b *Bot) HandleKeyboard(handler func() Keyboard) {
 	}
 }
 
-func (b *Bot) HandleMessage(handler func(userKey, messageType, content string) (Message, Keyboard)) {
+func (b *Bot) HandleMessage(handler func(userKey, messageType, content string) (*Message, *Keyboard)) {
 	b.messageHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		message, keyboard := handler(vars["user_key"], "", "")
@@ -69,7 +69,7 @@ func (b *Bot) HandleMessage(handler func(userKey, messageType, content string) (
 	}
 }
 
-func (b *Bot) HandleAddFriend(handler func(userKey string) Status) {
+func (b *Bot) HandleAddFriend(handler func(userKey string) *Status) {
 	b.addFriendHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		status := handler(vars["user_key"])
@@ -78,7 +78,7 @@ func (b *Bot) HandleAddFriend(handler func(userKey string) Status) {
 	}
 }
 
-func (b *Bot) HandleBlockFriend(handler func(userKey string) Status) {
+func (b *Bot) HandleBlockFriend(handler func(userKey string) *Status) {
 	b.blockFriendHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		status := handler(vars["user_key"])
@@ -87,7 +87,7 @@ func (b *Bot) HandleBlockFriend(handler func(userKey string) Status) {
 	}
 }
 
-func (b *Bot) HandleQuitChatRoom(handler func(userKey string) Status) {
+func (b *Bot) HandleQuitChatRoom(handler func(userKey string) *Status) {
 	b.quitChatRoomHandler = func(res http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		status := handler(vars["user_key"])

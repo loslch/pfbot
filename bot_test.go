@@ -19,8 +19,8 @@ func TestConfigureAppInfo(t *testing.T) {
 }
 
 func TestBindKeyboardHandler(t *testing.T) {
-	f := func() Keyboard {
-		return Keyboard{
+	f := func() *Keyboard {
+		return &Keyboard{
 			Type: "text",
 		}
 	}
@@ -34,7 +34,7 @@ func TestBindKeyboardHandler(t *testing.T) {
 
 func TestStringifyKeyboard(t *testing.T) {
 	obj := keyboardResponse{
-		Keyboard{
+		&Keyboard{
 			Type: "text",
 		},
 	}
@@ -48,7 +48,7 @@ func TestStringifyKeyboard(t *testing.T) {
 
 func TestStringifyMessage(t *testing.T) {
 	obj := messageResponse{
-		Message{
+		&Message{
 			Text:  "hello",
 			Photo: nil,
 			MessageButton: &MessageButton{
@@ -56,7 +56,7 @@ func TestStringifyMessage(t *testing.T) {
 				Label: "label",
 			},
 		},
-		Keyboard{
+		&Keyboard{
 			Type: "text",
 		},
 	}
@@ -75,7 +75,7 @@ func TestStringifyMessage(t *testing.T) {
 
 func TestStringifyFriend(t *testing.T) {
 	obj := friendResponse{
-		Status{
+		&Status{
 			HttpStatusCode: 200,
 			Code:           0,
 			Message:        "success",
@@ -93,7 +93,7 @@ func TestStringifyFriend(t *testing.T) {
 
 func TestStringifyChatRoom(t *testing.T) {
 	obj := chatRoomResponse{
-		Status{
+		&Status{
 			HttpStatusCode: 200,
 			Code:           0,
 			Message:        "success",
