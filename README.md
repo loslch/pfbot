@@ -8,9 +8,17 @@ pfbot is the unofficial (Kakao Talk) Plus Friend Bot SDK for the Go programming 
 ```golang
 bot := pfbot.NewBot()
 
-bot.HandleKeyboard(keyboardHandler)
+bot.HandleKeyboard(func() *pfbot.Keyboard {
+	return &pfbot.Keyboard{
+		Type: "text",
+		Buttons: []string{
+			"Hello",
+			"World",
+		},
+	}
+})
 
-bot.Run("/", ":8080")
+bot.Run(":8080")
 ```
 
 ```
@@ -42,7 +50,7 @@ bot := pfbot.NewBot()
 Run your bot:
 
 ```golang
-bot.Run("/", ":8080")
+bot.Run(":8080")
 ```
 
 Implement `Keyboard` handler and bind:
@@ -66,7 +74,7 @@ Implement `Message` handler and bind:
 ```golang
 func messageHandler(userKey, messageType, content string) (*pfbot.Message, *pfbot.Keyboard) {
   //do something
-  
+
   msg := &pfbot.Message{
     Text: "hello world",
   }
@@ -118,8 +126,7 @@ bot.Run("/", ":8080")
 or to run with [net/http](https://golang.org/pkg/net/http/):
 
 ```golang
-http.Handle("/", bot)
-http.ListenAndServe(":8080", nil)
+http.ListenAndServe(":8080", bot)
 ```
 
 Configure `AppKey` and `AppSecret` (but, no use case yet):

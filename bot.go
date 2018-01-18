@@ -2,8 +2,9 @@ package pfbot
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type Keyboard struct {
@@ -34,6 +35,16 @@ type Status struct {
 	Message        string `json:"message"`
 }
 
+type messageData struct {
+	UserKey     string `json:"user_key"`
+	MessageType string `json:"type"`
+	Content     string `json:"content"`
+}
+
+type friendData struct {
+	UserKey string `json:"user_key"`
+}
+
 func NewBot() *Bot {
 	bot := &Bot{}
 	bot.router = mux.NewRouter()
@@ -62,8 +73,13 @@ func (b *Bot) HandleKeyboard(handler func() *Keyboard) {
 
 func (b *Bot) HandleMessage(handler func(userKey, messageType, content string) (*Message, *Keyboard)) {
 	b.messageHandler = func(res http.ResponseWriter, req *http.Request) {
-		vars := mux.Vars(req)
-		message, keyboard := handler(vars["user_key"], vars["type"], vars["content"])
+		var data messageData
+		err := json.NewDecoder(req.Body).Decode(&data)
+		if err != nil {
+			panic(err)
+		}
+
+		message, keyboard := handler(data.UserKey, data.MessageType, data.Content)
 		obj := messageResponse{message, keyboard}
 		res.Write(stringify(obj))
 	}
@@ -71,8 +87,13 @@ func (b *Bot) HandleMessage(handler func(userKey, messageType, content string) (
 
 func (b *Bot) HandleAddFriend(handler func(userKey string) *Status) {
 	b.addFriendHandler = func(res http.ResponseWriter, req *http.Request) {
-		vars := mux.Vars(req)
-		status := handler(vars["user_key"])
+		var data friendData
+		err := json.NewDecoder(req.Body).Decode(&data)
+		if err != nil {
+			panic(err)
+		}
+
+		status := handler(data.UserKey)
 		obj := friendResponse{status}
 		res.Write(stringify(obj))
 	}
@@ -122,10 +143,8 @@ func (b *Bot) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	b.router.ServeHTTP(w, r)
 }
 
-func (b *Bot) Run(path, port string) {
-	//b.router.PathPrefix(path).Handler(b)
-	http.Handle("/", b)
-	http.ListenAndServe(port, nil)
+func (b *Bot) Run(port string) {
+	http.ListenAndServe(port, b)
 }
 
 func stringify(o interface{}) []byte {
